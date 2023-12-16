@@ -17,7 +17,10 @@ import android.widget.Toast;
 import com.example.recycleviewlab.adapters.ProductAdapter;
 import com.example.recycleviewlab.dao.ProductDAO;
 import com.example.recycleviewlab.dao.ProductDAO2;
+import com.example.recycleviewlab.dao.ProductDAO3;
 import com.example.recycleviewlab.models.Product;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,27 +49,22 @@ public class MainActivity extends AppCompatActivity {
                 showAddProductDialog();
             }
         });
-
-        // Fetch products from the server
         fetchProducts();
     }
 
+
     private void fetchProducts() {
-        ProductDAO2 productDAO2 = new ProductDAO2();
-        productDAO2.getProducts(new ProductDAO2.ProductCallback() {
+        ProductDAO3 productDAO3 = new ProductDAO3();
+        productDAO3.getAllProducts().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(List<Product> products) {
-                productList.addAll(products);
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                productList = queryDocumentSnapshots.toObjects(Product.class);
                 productAdapter.setData(productList);
                 productAdapter.notifyDataSetChanged();
             }
 
-            @Override
-            public void onFailure(Throwable t) {
-                // Handle failure
-                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
         });
+
     }
     private void showAddProductDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -87,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 String productPrice = etProductPrice.getText().toString();
                 String productImage = etProductImage.getText().toString();
                 if (TextUtils.isEmpty(productId) || TextUtils.isEmpty(productName) ||
-                        TextUtils.isEmpty(productPrice) || TextUtils.isEmpty(productImage)) {
+                        TextUtils.isEmpty(productPrice)) {
                     Toast.makeText(MainActivity.this, "Vui lòng nhập đầy đủ thông tin sản phẩm", Toast.LENGTH_SHORT).show();
                 } else {
                     Product product = new Product();
@@ -95,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     product.setName(productName);
                     product.setPrice(Float.parseFloat(productPrice));
                     product.setImage(productImage);
-                    ProductDAO productDAO = new ProductDAO(MainActivity.this);
-                    productDAO.Insert(product);
+                    ProductDAO3.addProduct(product);
                     productList.add(product);
                     productAdapter.setData(productList);
                     productAdapter.notifyDataSetChanged();

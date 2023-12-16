@@ -37,7 +37,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         Product product = ProductList.get(position);
         if (product == null)
             return;
-        Picasso.get().load(product.getImage()).into(holder.imgProduct);
+        if (product.getImage() != null) {
+            Picasso.get().load(product.getImage()).into(holder.imgProduct);
+        }
         holder.tvName.setText(product.getName());
         double price = product.getPrice();
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));

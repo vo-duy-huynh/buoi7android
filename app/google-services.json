@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "283723992637",
+    "project_id": "fir-connection-7a6bf",
+    "storage_bucket": "fir-connection-7a6bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283723992637:android:9c754f77d0084b20942454",
+        "android_client_info": {
+          "package_name": "com.example.recycleviewlab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYjySwWrPpQjk_UVxymbXtRY8x56Jz0o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
