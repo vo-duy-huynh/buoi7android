@@ -16,26 +16,27 @@ import android.widget.Toast;
 
 import com.example.recycleviewlab.adapters.ProductAdapter;
 import com.example.recycleviewlab.dao.ProductDAO;
+import com.example.recycleviewlab.dao.ProductDAO2;
 import com.example.recycleviewlab.models.Product;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
     private RecyclerView rcvProduct;
     private ProductAdapter productAdapter;
-    List<Product> productList;
+    private List<Product> productList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        rcvProduct=findViewById(R.id.recyclerview);
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL);
+
+        rcvProduct = findViewById(R.id.recyclerview);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rcvProduct.addItemDecoration(itemDecoration);
-        productList=getData();
-        productAdapter=new ProductAdapter();
-        productAdapter.setData(productList);
+
+        productList = new ArrayList<>();
+        productAdapter = new ProductAdapter();
         rcvProduct.setAdapter(productAdapter);
         rcvProduct.setLayoutManager(new LinearLayoutManager(this));
 
@@ -43,6 +44,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showAddProductDialog();
+            }
+        });
+
+        // Fetch products from the server
+        fetchProducts();
+    }
+
+    private void fetchProducts() {
+        ProductDAO2 productDAO2 = new ProductDAO2();
+        productDAO2.getProducts(new ProductDAO2.ProductCallback() {
+            @Override
+            public void onSuccess(List<Product> products) {
+                productList.addAll(products);
+                productAdapter.setData(productList);
+                productAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                // Handle failure
+                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -91,12 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-    List<Product> getData() {
-        List<Product> list = new ArrayList<>();
-        ProductDAO productDAO = new ProductDAO(this);
-        list = productDAO.GetAll();
-        return list;
     }
 
 }
